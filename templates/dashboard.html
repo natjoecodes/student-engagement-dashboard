@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classroom Analytics Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="College Logo" />
+            <span>Government Engineering College<br />Kozhikode</span>
+        </div>
+        <div class="faculty-period">
+            <span id="realtime-clock"></span>
+            <span>Faculty: <b>Prof. Subhija E N</b></span>
+            <span>Period: <b>Power Electronics</b></span>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <div class="left-panel">
+            <h2>Student Engagement Level</h2>
+            <div class="chart-wrapper">
+                <canvas id="engagementPie"></canvas>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="card">
+                <div class="card-info">
+                    <h3>Temperature</h3>
+                    <p id="tempValue">-- °C</p>
+                </div>
+                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=🌡️" alt="Temp Icon" />
+            </div>
+
+            <div class="card">
+                <div class="card-info">
+                    <h3>Humidity</h3>
+                    <p id="humValue">-- %</p>
+                </div>
+                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=💧" alt="Humidity Icon" />
+            </div>
+
+            <div class="card">
+                <div class="card-info">
+                    <h3>Ambient Sound</h3>
+                    <p id="noiseValue">--</p>
+                </div>
+                 <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=🔊" alt="Noise Icon" />
+            </div>
+
+            <div class="card">
+                <div class="card-info">
+                    <h3>Ambient Light</h3>
+                    <p id="lightValue">--</p>
+                </div>
+                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=💡" alt="Light Icon" />
+            </div>
+
+            <div class="card">
+                <div class="card-info">
+                    <h3>CO₂ Level</h3>
+                    <p id="co2Value">--</p>
+                </div>
+                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=💨" alt="CO2 Icon" />
+            </div>
+        </div>
+    </main>
+
+    <div class="bottom-controls">
+        <button id="startBtn">Start</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="stopBtn">Stop</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
