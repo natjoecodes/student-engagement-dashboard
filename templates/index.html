@@ -18,7 +18,7 @@
   </nav>
 
   <!-- LOGIN CONTENT -->
-  <div class="login-wrapper">
+  <div class="login-wrapper {% if error %}shake{% endif %}">
     <div class="login-header">
       <h2>Welcome Back</h2>
       <p class="subtitle">Log in to access Classroom Analytics</p>
@@ -32,6 +32,9 @@
         <div class="input-group">
           <input type="password" id="password" name="password" placeholder="Enter your password" required />
         </div>
+        {% if error %}
+      <div class="login-error">{{ error }}</div>
+        {% endif %}
         <button type="submit" class="login-btn">Login</button>
         <p class="login-footer">Forgot your password? <a href="#">Reset here</a></p>
       </form>

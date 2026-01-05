@@ -1,36 +1,34 @@
+document.addEventListener("DOMContentLoaded", () => {
 // --- DUMMY PIE CHART SETUP ---
-const ctx = document.getElementById('engagementPie').getContext('2d');
-const engagementPie = new Chart(ctx, {
-  type: 'pie',
-  data: {
-    labels: ['Highly Engaged', 'Moderately Engaged', 'Disengaged'],
-    datasets: [{
-      data: [40, 35, 25], // Static dummy values
-      backgroundColor: [
-        '#a78bfa', // base purple
-        '#c4b5fd', // lighter shade
-        '#7c3aed'  // darker shade
-      ],
-      borderColor: '#0d1117',
-      borderWidth: 2
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          color: '#c9d1d9',
-          font: {
-            size: 14
+const pieCanvas = document.getElementById('engagementPie');
+if (pieCanvas) {
+  const ctx = pieCanvas.getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Highly Engaged', 'Moderately Engaged', 'Disengaged'],
+      datasets: [{
+        data: [40, 35, 25],
+        backgroundColor: ['#a78bfa', '#c4b5fd', '#7c3aed'],
+        borderColor: '#0d1117',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#c9d1d9',
+            font: { size: 14 }
           }
         }
       }
     }
-  }
-});
+  });
+}
 
 // --- REAL-TIME CLOCK ---
 function updateClock() {
@@ -75,3 +73,40 @@ async function fetchSensorData() {
 setInterval(fetchSensorData, 3000);
 // Fetch once on page load
 fetchSensorData();
+
+  // --- LOGOUT CONFIRMATION MODAL ---
+  const logoutBtn = document.getElementById("logoutBtn");
+  const logoutModal = document.getElementById("logoutModal");
+  const cancelLogout = document.getElementById("cancelLogout");
+  const closeLogout = document.getElementById("closeLogout");
+
+  function closeModal() {
+    logoutModal.classList.remove("active");
+    logoutBtn.focus();
+  }
+
+  if (logoutBtn && logoutModal && cancelLogout && closeLogout) {
+
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      logoutModal.classList.add("active");
+    });
+
+    cancelLogout.addEventListener("click", closeModal);
+    closeLogout.addEventListener("click", closeModal);
+
+    // ESC key support
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && logoutModal.classList.contains("active")) {
+        closeModal();
+      }
+    });
+
+    // Click outside modal closes it
+    logoutModal.addEventListener("click", (e) => {
+      if (e.target === logoutModal) {
+        closeModal();
+      }
+    });
+  }
+});

@@ -23,7 +23,7 @@
             <span>Period: <b>Power Electronics</b></span>
         </div>
         <div class="navbar-actions">
-            <a href="/logout" class="logout-btn">Logout</a>
+            <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
         </div>
     </nav>
 
@@ -85,6 +85,19 @@
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+        <div class="modal-overlay" id="logoutModal">
+      <div class="modal">
+        <button type="button" class="modal-close" id="closeLogout" aria-label="Close dialog">✕</button>
+        <h3>Confirm Logout</h3>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn cancel" id="cancelLogout">No</button>
+          <a href="/logout" class="modal-btn confirm">Yes</a>
+        </div>
+      </div>
+    </div>
+
 
 </body>
 </html>

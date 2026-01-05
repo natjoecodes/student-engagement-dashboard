@@ -39,7 +39,10 @@ def login():
         session['user'] = username
         return redirect('/dashboard')
     else:
-        return "Invalid credentials", 401
+        return render_template(
+        "index.html",
+        error="Invalid username or password"
+    )
 
 # Protected dashboard route
 @app.route('/dashboard')
