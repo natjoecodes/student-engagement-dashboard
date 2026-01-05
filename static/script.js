@@ -30,24 +30,89 @@ if (pieCanvas) {
   });
 }
 
-// --- REAL-TIME CLOCK ---
-function updateClock() {
+// --- REAL-TIME DATE/TIME ---
+function updateDateTime() {
   const now = new Date();
-  let hours = now.getHours();
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const seconds = now.getSeconds().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12; // Convert to 12-hour format
 
-  const clockElement = document.getElementById('realtime-clock');
-  if (clockElement) {
-    clockElement.innerHTML = `Time: <b>${hours}:${minutes}:${seconds} ${ampm}</b>`;
+  const time = now.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
+  const date = now.toLocaleDateString('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  const el = document.getElementById("realtime-datetime");
+  if (el) {
+    el.textContent = `${date} · ${time}`;
   }
 }
 
-// Update clock immediately and then every second
-updateClock();
-setInterval(updateClock, 1000);
+// --- TIMETABLE + FACULTY DATA ---
+let timetableData = {};
+let facultyData = {};
+
+async function loadTimetableData() {
+  try {
+    const timetableRes = await fetch("/static/data/timetable.json");
+    timetableData = await timetableRes.json();
+
+    const facultyRes = await fetch("/static/data/faculty.json");
+    facultyData = await facultyRes.json();
+  } catch (err) {
+    console.error("Error loading timetable data:", err);
+  }
+}
+
+function getCurrentClassFromTimetable() {
+  const now = new Date();
+  const day = now.toLocaleDateString("en-GB", { weekday: "long" });
+  const time = now.toTimeString().slice(0, 5); // HH:MM
+
+  const todaySchedule = timetableData[day];
+  if (!todaySchedule) {
+    return { subject: "No Scheduled Class", faculty: "—" };
+  }
+
+  for (const slot of todaySchedule) {
+    if (time >= slot.start && time < slot.end) {
+
+      if (slot.type === "BREAK") {
+        return { subject: slot.label, faculty: "—" };
+      }
+
+      const facultyNames = slot.faculty
+        .map(code => facultyData[code] || code)
+        .join(", ");
+
+      return {
+        subject: slot.subject,
+        faculty: facultyNames
+      };
+    }
+  }
+
+  return { subject: "No Scheduled Class", faculty: "—" };
+}
+
+function updateNavbarFromTimetable() {
+  const subjectEl = document.getElementById("subjectName");
+  const facultyEl = document.getElementById("facultyName");
+
+  if (!subjectEl || !facultyEl) return;
+
+  const current = getCurrentClassFromTimetable();
+  subjectEl.textContent = current.subject;
+  facultyEl.textContent = current.faculty;
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
 
 // --- FETCH SENSOR DATA FROM FLASK ---
 async function fetchSensorData() {
@@ -109,4 +174,10 @@ fetchSensorData();
       }
     });
   }
+
+// --- INIT TIMETABLE LOGIC ---
+loadTimetableData().then(() => {
+  updateNavbarFromTimetable();
+  setInterval(updateNavbarFromTimetable, 60000); // update every minute
+});
 });

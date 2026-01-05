@@ -67,12 +67,17 @@ body {
 .faculty-period {
   display: flex;
   align-items: center;
-  gap: 60px;            /* ← THIS controls uniform spacing */
+  gap: 40px;            /* ← THIS controls uniform spacing */
   font-weight: 500;
   color: var(--muted);
 }
 
 .faculty-period b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+#realtime-datetime {
   color: var(--text);
   font-weight: 600;
 }
