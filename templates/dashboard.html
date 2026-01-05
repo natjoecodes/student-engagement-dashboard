@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Classroom Analytics Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
@@ -20,6 +21,9 @@
             <span id="realtime-clock"></span>
             <span>Faculty: <b>Prof. Subhija E N</b></span>
             <span>Period: <b>Power Electronics</b></span>
+        </div>
+        <div class="navbar-actions">
+            <a href="/logout" class="logout-btn">Logout</a>
         </div>
     </nav>
 
@@ -37,40 +41,40 @@
                     <h3>Temperature</h3>
                     <p id="tempValue">-- °C</p>
                 </div>
-                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=🌡️" alt="Temp Icon" />
-            </div>
+                <img src="{{ url_for('static', filename='assets/temperature.png') }}" alt="Temperature Icon" class="card-icon" />
+    </div>
 
             <div class="card">
                 <div class="card-info">
                     <h3>Humidity</h3>
                     <p id="humValue">-- %</p>
                 </div>
-                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=💧" alt="Humidity Icon" />
-            </div>
+                <img src="{{ url_for('static', filename='assets/humidity.png') }}" alt="Humidity Icon" class="card-icon" />
+    </div>
 
             <div class="card">
                 <div class="card-info">
                     <h3>Ambient Sound</h3>
                     <p id="noiseValue">--</p>
                 </div>
-                 <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=🔊" alt="Noise Icon" />
-            </div>
+                 <img src="{{ url_for('static', filename='assets/sound.png') }}" alt="Sound Icon" class="card-icon" />
+    </div>
 
             <div class="card">
                 <div class="card-info">
                     <h3>Ambient Light</h3>
                     <p id="lightValue">--</p>
                 </div>
-                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=💡" alt="Light Icon" />
-            </div>
+                <img src="{{ url_for('static', filename='assets/light.png') }}" alt="Light Icon" class="card-icon" />
+    </div>
 
             <div class="card">
                 <div class="card-info">
                     <h3>CO₂ Level</h3>
                     <p id="co2Value">--</p>
                 </div>
-                <img src="https://placehold.co/64x64/a78bfa/FFFFFF?text=💨" alt="CO2 Icon" />
-            </div>
+                <img src="{{ url_for('static', filename='assets/co2.png') }}" alt="CO₂ Icon" class="card-icon" />
+    </div>
         </div>
     </main>
 

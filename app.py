@@ -1,10 +1,19 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect, session
 from flask_cors import CORS
 
 # Initialize the Flask application
 app = Flask(__name__)
+# Set the secret key for session management
+app.secret_key = "edge-ai-demo-secret"
 # Enable Cross-Origin Resource Sharing (CORS) to allow requests from the browser
 CORS(app)
+
+# Simple in-memory users dictionary
+USERS = {
+    "teacher1": "pass123",
+    "teacher2": "demo456",
+    "hod": "admin789"
+}
 
 # A dictionary to store the most recent sensor data
 sensor_data = {
@@ -15,12 +24,35 @@ sensor_data = {
     "co2": 0
 }
 
-# Route for the main dashboard page
+# Route for the login page
 @app.route('/')
 def index():
-    """Renders the main dashboard HTML page."""
-    # Flask's render_template function looks in the 'templates' folder
+    return render_template('index.html')
+
+# Route for handling login POST requests
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if username in USERS and USERS[username] == password:
+        session['user'] = username
+        return redirect('/dashboard')
+    else:
+        return "Invalid credentials", 401
+
+# Protected dashboard route
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect('/')
     return render_template('dashboard.html')
+
+# logout route
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
 
 # Route for the ESP32 to send data to
 @app.route('/update-sensor', methods=['POST'])
