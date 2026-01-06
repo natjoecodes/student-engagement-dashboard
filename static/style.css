@@ -8,6 +8,9 @@
   --shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Softer, deeper shadow for dark BG */
   --navbar-h: 64px;
   --controls-h: 70px;
+  --grid-gap: 30px;
+  --card-gap: 24px;
+  --alert-h: 46px;
 }
 
 /* ===== Reset ===== */
@@ -62,6 +65,45 @@ body {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.3px;
+}
+
+.class-info {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  font-size: 1.15rem;      /* ↑ noticeable but controlled */
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  color: var(--text);
+  padding-bottom: 8px;     /* space for underline */
+}
+
+/* FULL-WIDTH underline */
+.class-info::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 2px;
+
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.class-label,
+.class-separator {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.class-name {
+  color: var(--text);
+  font-weight: 700;
 }
 
 .faculty-period {
@@ -270,66 +312,91 @@ body {
 
 /* ===== DASHBOARD CONTAINER ===== */
 .dashboard-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 400px minmax(500px, 1fr) 340px;
+  grid-template-rows:
+    calc(100% - var(--alert-h) - var(--grid-gap))
+    var(--alert-h);
+  gap: var(--grid-gap);
+
   height: calc(100vh - var(--navbar-h) - var(--controls-h));
   margin-top: var(--navbar-h);
   margin-bottom: var(--controls-h);
-  padding: 0 40px;
-  gap: 30px;
+
+  padding: var(--grid-gap);
+  overflow: hidden;
+}
+
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.center-panel {
+  display: flex;
+}
+
+.left-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.center-panel {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.right-panel {
+  grid-column: 3;
+  grid-row: 1 / span 2; /* ← THIS IS THE MAGIC */
 }
 
 /* ===== LEFT PANEL ===== */
 .left-panel {
-  flex: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: 1fr 2fr; /* history : heatmap */
+  gap: var(--card-gap);
+  min-height: 0;
 }
 
-.left-panel h2 {
-  font-size: 1.8rem;
-  color: var(--accent);
-  margin-bottom: 20px;
-  font-weight: 600;
+/* === PANEL STRUCTURE === */
+.center-panel {
+  display: flex;
+  min-height: 0; 
 }
 
-.chart-wrapper {
-  width: 400px;
-  height: 400px;
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.heatmap-card {
+  flex: 1;
+  min-height: 0;
 }
 
 /* ===== RIGHT PANEL ===== */
 .right-panel {
-  flex: 1.5;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 85%;
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: var(--card-gap);
+  padding: 0;           /* important */
+  min-height: 0;
+  align-content: stretch;
+}
+
+.right-panel,
+.right-panel > .card {
+  min-height: 0;
 }
 
 .card {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;        /* ← critical */
+  align-items: stretch;
+  justify-content: flex-start;
   padding: 18px;
   background: var(--card-bg);
   backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   border-radius: 20px;
   box-shadow: var(--shadow);
-  height: 16%;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: 0.3s ease;
 }
@@ -338,6 +405,21 @@ body {
   transform: translateY(-5px);
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card h2,
+.card h3 {
+  text-align: center;
+  margin-bottom: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.right-panel .card {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 0;
 }
 
 .card-info h3 {
@@ -359,6 +441,123 @@ body {
   height: 42px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
 }
+
+/* === LIVE TREND PRIORITY === */
+.live-trend-card {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.live-trend-card h2 {
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+/* === ALERT BAR (SCOPED, NOT GLOBAL) === */
+.scoped-alert {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.10),
+    rgba(255, 255, 255, 0.05)
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.scoped-alert::before {
+  content: "";
+  width: 3px;
+  height: 60%;
+  border-radius: 6px;
+
+  background: linear-gradient(
+    180deg,
+    #fbbf24,
+    #f59e0b
+  );
+
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25);
+}
+
+.alert-emphasis {
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.alert-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.alert-text {
+  color: var(--text);
+}
+
+/* === UX MICRO-IMPROVEMENTS === */
+.history-list li {
+  padding: 8px 0;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.history-list li:hover {
+  color: var(--text);
+}
+
+.left-panel h2 {
+  font-size: 1.8rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.chart-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.10),
+    rgba(255, 255, 255, 0.04)
+  );
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-radius: 28px;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+#attentionChart {
+  flex: 1;
+}
+
 /* ===== BOTTOM CONTROLS (v2 - Upgraded & Resized) ===== */
 .bottom-controls {
   position: fixed;

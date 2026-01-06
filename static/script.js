@@ -1,36 +1,101 @@
 document.addEventListener("DOMContentLoaded", () => {
-// --- DUMMY PIE CHART SETUP ---
-const pieCanvas = document.getElementById('engagementPie');
-if (pieCanvas) {
-  const ctx = pieCanvas.getContext('2d');
-  new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: ['Highly Engaged', 'Moderately Engaged', 'Disengaged'],
-      datasets: [{
-        data: [40, 35, 25],
-        backgroundColor: ['#a78bfa', '#c4b5fd', '#7c3aed'],
-        borderColor: '#0d1117',
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            color: '#c9d1d9',
-            font: { size: 14 }
+  // --- ATTENTION LEVEL LINE CHART ---
+  let attentionChart;
+  let attentionData = [];
+  let timeLabels = [];
+
+  let sessionActive = false;
+  let sessionPaused = false;
+  let chartInterval = null;
+  let sessionStartTime = null;
+  let pausedAt = null;
+
+  function initAttentionChart() {
+    const canvas = document.getElementById("attentionChart");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+
+    attentionChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: "Attentiveness (%)",
+          data: attentionData,
+          borderWidth: 2,
+          tension: 0.35,
+          fill: false
+        }]
+      },
+      options: {
+        animation: false,
+        responsive: true,
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            title: { display: true, text: "Attentiveness (%)" }
+          },
+          x: {
+            title: { display: true, text: "Time (mm:ss)" }
           }
         }
       }
-    }
-  });
-}
+    });
+  }
 
-// --- REAL-TIME DATE/TIME ---
+  function computeAttentiveness() {
+    // Placeholder logic (replace with real model later)
+    return Math.floor(60 + Math.random() * 30);
+  }
+
+  function startChartPlotting() {
+    attentionData.length = 0;
+    timeLabels.length = 0;
+    attentionChart.update();
+
+    sessionStartTime = Date.now();
+    sessionPaused = false;
+
+    chartInterval = setInterval(() => {
+      if (!sessionActive || sessionPaused) return;
+
+      const elapsed = Date.now() - sessionStartTime;
+      const min = String(Math.floor(elapsed / 60000)).padStart(2, "0");
+      const sec = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, "0");
+
+      timeLabels.push(`${min}:${sec}`);
+      attentionData.push(computeAttentiveness());
+
+      attentionChart.update();
+    }, 5000);
+  }
+
+  function pauseChartPlotting() {
+    sessionPaused = true;
+    pausedAt = Date.now();
+  }
+
+  function resumeChartPlotting() {
+    if (!sessionPaused) return;
+
+    const pauseDuration = Date.now() - pausedAt;
+    sessionStartTime += pauseDuration;
+    sessionPaused = false;
+  }
+
+  function stopChartPlotting() {
+    if (chartInterval) {
+      clearInterval(chartInterval);
+      chartInterval = null;
+    }
+    sessionActive = false;
+    sessionPaused = false;
+  }
+
+
+  // --- REAL-TIME DATE/TIME ---
 function updateDateTime() {
   const now = new Date();
 
@@ -175,9 +240,49 @@ fetchSensorData();
     });
   }
 
-// --- INIT TIMETABLE LOGIC ---
-loadTimetableData().then(() => {
-  updateNavbarFromTimetable();
-  setInterval(updateNavbarFromTimetable, 60000); // update every minute
-});
+  // --- SESSION BUTTONS ---
+  initAttentionChart();
+
+  const startBtn = document.getElementById("startBtn");
+  const pauseBtn = document.getElementById("pauseBtn");
+  const stopBtn = document.getElementById("stopBtn");
+
+  if (startBtn && pauseBtn && stopBtn) {
+
+    startBtn.addEventListener("click", () => {
+      if (sessionActive) return;
+
+      sessionActive = true;
+      startChartPlotting();
+      console.log("Session started");
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      if (!sessionActive) return;
+
+      if (!sessionPaused) {
+        pauseChartPlotting();
+        pauseBtn.textContent = "Resume";
+        console.log("Session paused");
+      } else {
+        resumeChartPlotting();
+        pauseBtn.textContent = "Pause";
+        console.log("Session resumed");
+      }
+    });
+
+    stopBtn.addEventListener("click", () => {
+      if (!sessionActive) return;
+
+      stopChartPlotting();
+      pauseBtn.textContent = "Pause";
+      console.log("Session stopped");
+    });
+  }
+
+  // --- INIT TIMETABLE LOGIC ---
+  loadTimetableData().then(() => {
+    updateNavbarFromTimetable();
+    setInterval(updateNavbarFromTimetable, 60000); // update every minute
+  });
 });

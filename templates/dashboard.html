@@ -28,11 +28,35 @@
     </nav>
 
     <main class="dashboard-container">
+        <!-- LEFT PANEL -->
         <div class="left-panel">
-            <h2>Student Engagement Level</h2>
-            <div class="chart-wrapper">
-                <canvas id="engagementPie"></canvas>
+            <div class="card history-card">
+            <h3>History of Classes</h3>
+            <ul class="history-list">
+                <li>DSP – 09:00–09:50</li>
+                <li>IoT – 10:00–10:50</li>
+                <li>Control – 11:00–11:50</li>
+            </ul>
             </div>
+
+            <div class="card heatmap-card">
+            <h3>Attention Heat Map</h3>
+            <canvas id="attentionHeatmap"></canvas>
+            </div>
+        </div>
+
+        <!-- CENTER PANEL -->
+        <div class="center-panel">
+            <div class="chart-wrapper">
+            <h2>Live Attentiveness Trend</h2>
+            <canvas id="attentionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="scoped-alert">
+            <span class="alert-icon">⚠️</span>
+            <span class="alert-emphasis">Low attentiveness</span>
+            <span class="alert-text">detected in the last 2 minutes</span>
         </div>
 
         <div class="right-panel">
