@@ -73,22 +73,22 @@
 
   "Wednesday": [
     {
-      "start": "08:30",
-      "end": "09:30",
-      "subject": "Honors",
-      "faculty": []
-    },
-    {
       "start": "09:30",
       "end": "10:30",
-      "subject": "Aviation Electronics",
-      "faculty": ["ARV"]
+      "subject": "Comprehensive Course Viva",
+      "faculty": ["SKP"]
     },
     {
       "start": "10:30",
       "end": "11:30",
       "subject": "VLSI Circuit Design",
       "faculty": ["STV"]
+    },
+        {
+      "start": "11:30",
+      "end": "12:30",
+      "subject": "Aviation Electronics",
+      "faculty": ["ARV"]
     },
     {
       "type": "BREAK",

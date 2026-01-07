@@ -1,11 +1,16 @@
+/* ==========================================================================
+   1. CORE VARIABLES & RESET
+   ========================================================================== */
 :root {
   /* ======= Core Color Scheme (Premium Dark) ======= */
-  --bg: linear-gradient(180deg, #111827, #0d1117); /* Deep space-blue/charcoal gradient */
-  --card-bg: rgba(255, 255, 255, 0.07); /* Frosted glass effect */
-  --accent: #a78bfa; /* Vibrant violet for a premium pop */
-  --text: #f8fafc; /* Soft, readable off-white */
-  --muted: #94a3b8; /* Lighter gray for secondary text */
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* Softer, deeper shadow for dark BG */
+  --bg: linear-gradient(180deg, #111827, #0d1117);
+  --card-bg: rgba(255, 255, 255, 0.07);
+  --accent: #a78bfa;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* ======= Dimensions ======= */
   --navbar-h: 64px;
   --controls-h: 70px;
   --grid-gap: 30px;
@@ -13,7 +18,6 @@
   --alert-h: 46px;
 }
 
-/* ===== Reset ===== */
 * {
   margin: 0;
   padding: 0;
@@ -28,7 +32,51 @@ body {
   overflow: hidden;
 }
 
-/* ===== NAVBAR ===== */
+/* ==========================================================================
+   2. LAYOUT STRUCTURE (DASHBOARD)
+   ========================================================================== */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 400px minmax(500px, 1fr) 340px;
+  grid-template-rows: calc(100% - var(--alert-h) - var(--grid-gap)) var(--alert-h);
+  gap: var(--grid-gap);
+  height: calc(100vh - var(--navbar-h) - var(--controls-h));
+  margin-top: var(--navbar-h);
+  margin-bottom: var(--controls-h);
+  padding: var(--grid-gap);
+  overflow: hidden;
+}
+
+.left-panel {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-rows: 2.5fr 1fr; /* history : heatmap */
+  gap: var(--card-gap);
+  min-height: 0;
+}
+
+.center-panel {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.right-panel {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: var(--card-gap);
+  padding: 0;
+  min-height: 0;
+  align-content: stretch;
+}
+
+/* ==========================================================================
+   3. NAVIGATION BAR
+   ========================================================================== */
 .navbar {
   position: fixed;
   top: 0;
@@ -39,7 +87,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
-  background: rgba(31, 41, 55, 0.6); /* Dark glass */
+  background: rgba(31, 41, 55, 0.6);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -72,31 +120,25 @@ body {
   display: flex;
   align-items: baseline;
   gap: 8px;
-
-  font-size: 1.15rem;      /* ↑ noticeable but controlled */
+  font-size: 1.15rem;
   font-weight: 600;
   letter-spacing: 0.3px;
-
   color: var(--text);
-  padding-bottom: 8px;     /* space for underline */
+  padding-bottom: 8px;
 }
 
-/* FULL-WIDTH underline */
 .class-info::after {
   content: "";
   position: absolute;
   left: 0;
   bottom: 0;
-
   width: 100%;
   height: 2px;
-
   background: var(--accent);
   border-radius: 2px;
 }
 
-.class-label,
-.class-separator {
+.class-label, .class-separator {
   color: var(--muted);
   font-weight: 500;
 }
@@ -109,7 +151,7 @@ body {
 .faculty-period {
   display: flex;
   align-items: center;
-  gap: 40px;            /* ← THIS controls uniform spacing */
+  gap: 40px;
   font-weight: 500;
   color: var(--muted);
 }
@@ -146,245 +188,14 @@ body {
   box-shadow: 0 6px 22px rgba(239, 68, 68, 0.6);
 }
 
-.logout-btn:active {
-  transform: translateY(0);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
-}
+/* ==========================================================================
+   4. COMPONENTS (CARDS, ALERTS, CHARTS)
+   ========================================================================== */
 
-/* ===== PREMIUM LOGOUT MODAL ===== */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 15, 25, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
-  z-index: 9999;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Modal Card */
-.modal {
-  width: 340px;
-  padding: 28px 30px 26px;
-  border-radius: 22px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.12),
-    rgba(255, 255, 255, 0.05)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  text-align: center;
-  transform: scale(0.92) translateY(10px);
-  transition: transform 0.35s ease;
-  position: relative;
-}
-
-.modal-overlay.active .modal {
-  transform: scale(1) translateY(0);
-  animation: modalBounce 0.4s cubic-bezier(.25,.8,.25,1);
-}
-
-/* Minimal close (X) button */
-.modal-close {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  background: transparent;
-  border: none;
-  font-size: 1.1rem;
-  color: var(--muted);
-  cursor: pointer;
-  line-height: 1;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.modal-close:hover {
-  color: var(--text);
-  transform: scale(1.1);
-}
-
-/* Micro bounce-in animation */
-@keyframes modalBounce {
-  0%   { transform: scale(0.9) translateY(12px); opacity: 0; }
-  60%  { transform: scale(1.03) translateY(-2px); opacity: 1; }
-  100% { transform: scale(1) translateY(0); }
-}
-
-.modal-overlay.active .modal {
-  animation: modalBounce 0.4s cubic-bezier(.25,.8,.25,1);
-}
-
-/* Title */
-.modal h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8px;
-  letter-spacing: 0.2px;
-}
-
-/* Description */
-.modal p {
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: var(--muted);
-  margin-bottom: 26px;
-}
-
-/* Actions */
-.modal-actions {
-  display: flex;
-  gap: 14px;
-}
-
-/* Buttons base */
-.modal-btn {
-  flex: 1;
-  padding: 10px 0;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.25s cubic-bezier(.25,.8,.25,1);
-}
-
-/* Cancel button */
-.modal-btn.cancel {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.modal-btn.cancel:hover {
-  background: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
-}
-
-/* Confirm (Logout) button */
-.modal-btn.confirm {
-  background: linear-gradient(90deg, #ef4444, #f87171);
-  color: #fff;
-  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.45);
-}
-
-.modal-btn.confirm:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(239, 68, 68, 0.6);
-}
-
-.modal-btn.confirm:active {
-  transform: translateY(0);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.35);
-}
-
-.modal-close {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  background: transparent;
-  border: none;
-  font-size: 1.1rem;
-  color: var(--muted);
-  cursor: pointer;
-  line-height: 1;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.modal-close:hover {
-  color: var(--text);
-  transform: scale(1.1);
-}
-
-/* ===== DASHBOARD CONTAINER ===== */
-.dashboard-container {
-  display: grid;
-  grid-template-columns: 400px minmax(500px, 1fr) 340px;
-  grid-template-rows:
-    calc(100% - var(--alert-h) - var(--grid-gap))
-    var(--alert-h);
-  gap: var(--grid-gap);
-
-  height: calc(100vh - var(--navbar-h) - var(--controls-h));
-  margin-top: var(--navbar-h);
-  margin-bottom: var(--controls-h);
-
-  padding: var(--grid-gap);
-  overflow: hidden;
-}
-
-.left-panel,
-.right-panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--card-gap);
-}
-
-.center-panel {
-  display: flex;
-}
-
-.left-panel {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.center-panel {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.right-panel {
-  grid-column: 3;
-  grid-row: 1 / span 2; /* ← THIS IS THE MAGIC */
-}
-
-/* ===== LEFT PANEL ===== */
-.left-panel {
-  display: grid;
-  grid-template-rows: 2.5fr 1fr; /* history : heatmap */
-  gap: var(--card-gap);
-  min-height: 0;
-}
-
-/* === PANEL STRUCTURE === */
-.center-panel {
-  display: flex;
-  min-height: 0; 
-}
-
-/* ===== RIGHT PANEL ===== */
-.right-panel {
-  display: grid;
-  grid-template-rows: repeat(5, minmax(0, 1fr));
-  gap: var(--card-gap);
-  padding: 0;           /* important */
-  min-height: 0;
-  align-content: stretch;
-}
-
-.right-panel,
-.right-panel > .card {
-  min-height: 0;
-}
-
+/* --- Universal Card Styling --- */
 .card {
   display: flex;
-  flex-direction: column;        /* ← critical */
+  flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
   padding: 18px;
@@ -402,12 +213,21 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.card h2,
-.card h3 {
+.card h2, .card h3 {
   text-align: center;
   margin-bottom: 14px;
   font-weight: 600;
   color: var(--text);
+}
+
+/* --- Panel Specific Card Overrides --- */
+.left-panel .card:first-child { overflow-y: auto; }
+
+.left-panel h2 {
+  font-size: 1.8rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .right-panel .card {
@@ -437,7 +257,7 @@ body {
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
 }
 
-/* === LIVE TREND PRIORITY === */
+/* --- Live Trend & Charts --- */
 .live-trend-card {
   width: 100%;
   height: 100%;
@@ -449,98 +269,15 @@ body {
   margin-bottom: 12px;
 }
 
-/* === ALERT BAR (SCOPED, NOT GLOBAL) === */
-.scoped-alert {
-  grid-column: 1 / span 2;
-  grid-row: 2;
-
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 0 20px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.10),
-    rgba(255, 255, 255, 0.05)
-  );
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  color: var(--text);
-  font-weight: 500;
-  letter-spacing: 0.2px;
-
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.scoped-alert::before {
-  content: "";
-  width: 3px;
-  height: 60%;
-  border-radius: 6px;
-
-  background: linear-gradient(
-    180deg,
-    #fbbf24,
-    #f59e0b
-  );
-
-  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25);
-}
-
-.alert-emphasis {
-  font-weight: 600;
-  color: #fbbf24;
-}
-
-.alert-icon {
-  font-size: 1.1rem;
-  line-height: 1;
-}
-
-.alert-text {
-  color: var(--text);
-}
-
-/* === UX MICRO-IMPROVEMENTS === */
-.history-list li {
-  padding: 8px 0;
-  color: var(--muted);
-  cursor: pointer;
-}
-
-.history-list li:hover {
-  color: var(--text);
-}
-
-.left-panel h2 {
-  font-size: 1.8rem;
-  color: var(--accent);
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
 .chart-wrapper {
   width: 100%;
   height: 100%;
   padding: 24px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.10),
-    rgba(255, 255, 255, 0.04)
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.04));
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   border-radius: 28px;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.18);
   display: flex;
   flex-direction: column;
@@ -549,11 +286,191 @@ body {
   justify-content: center;
 }
 
-#attentionChart {
-  flex: 1;
+#attentionChart { flex: 1; }
+
+/* --- Alert Bar --- */
+.scoped-alert {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
-/* ===== BOTTOM CONTROLS (v2 - Upgraded & Resized) ===== */
+.scoped-alert::before {
+  content: "";
+  width: 3px;
+  height: 60%;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #fbbf24, #f59e0b);
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25);
+}
+
+.alert-emphasis { font-weight: 600; color: #fbbf24; }
+.alert-icon { font-size: 1.1rem; line-height: 1; }
+
+/* --- Heatmap --- */
+.heatmap-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  margin: 16px 0;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.2s ease;
+}
+
+.heatmap-cell:hover { transform: scale(1.08); }
+
+.heatmap-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.heatmap-footer b { color: var(--text); }
+
+/* --- Lists --- */
+.history-list li {
+  padding: 8px 0;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.history-list li:hover { color: var(--text); }
+
+/* ==========================================================================
+   5. MODALS
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 25, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 9999;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  width: 340px;
+  padding: 28px 30px 26px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  text-align: center;
+  transform: scale(0.92) translateY(10px);
+  transition: transform 0.35s ease;
+  position: relative;
+}
+
+.modal h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+.modal p {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--muted);
+  margin-bottom: 26px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text);
+  transform: scale(1.1);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 14px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(.25,.8,.25,1);
+}
+
+.modal-btn.cancel {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.modal-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.modal-btn.confirm {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.45);
+}
+
+.modal-btn.confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(239, 68, 68, 0.6);
+}
+
+/* ==========================================================================
+   6. BOTTOM CONTROLS
+   ========================================================================== */
 .bottom-controls {
   position: fixed;
   bottom: 0;
@@ -563,8 +480,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 50px; /* <-- REDUCED from 60px */
-  background: rgba(31, 41, 55, 0.6); /* Dark glass */
+  gap: 50px;
+  background: rgba(31, 41, 55, 0.6);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -574,20 +491,15 @@ body {
 }
 
 .bottom-controls button {
-  /* --- Core Styles --- */
-  padding: 10px 65px; /* <-- REDUCED from 12px 60px */
-  font-size: 0.9rem;  /* <-- REDUCED from 1rem */
+  padding: 10px 65px;
+  font-size: 0.9rem;
   font-weight: 600;
   color: white;
   cursor: pointer;
-  
-  /* --- New "Sexy" Look --- */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle edge highlight */
-  border-radius: 50px; /* Softer, pill shape */
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Makes text pop */
-  background-size: 200% auto; /* For the gradient animation on hover */
-
-  /* --- Smooth Transitions --- */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  background-size: 200% auto;
   transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
 }
 
@@ -604,39 +516,23 @@ body {
   box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
 }
 
-/* --- HOVER STATE: More dynamic and interactive --- */
 .bottom-controls button:hover {
-  background-position: right center; /* Animates the gradient */
-  transform: translateY(-4px) scale(1.05); /* Lifts the button more */
-  /* --- A more pronounced glow on hover --- */
+  background-position: right center;
+  transform: translateY(-4px) scale(1.05);
 }
+
 #startBtn:hover { box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5); }
 #pauseBtn:hover { box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5); }
 #stopBtn:hover  { box-shadow: 0 6px 25px rgba(239, 68, 68, 0.5); }
 
-
-/* --- ACTIVE STATE: Simulates a real button press --- */
 .bottom-controls button:active {
-  transform: translateY(-1px) scale(1.02); /* Presses the button down */
-  /* --- Inset shadow to complete the "pressed" illusion --- */
+  transform: translateY(-1px) scale(1.02);
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); 
 }
 
-/* ===== LOGIN PAGE ===== */
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-  100% { transform: translateX(0); }
-}
-
-.shake {
-  animation: shake 0.35s ease-in-out;
-}
-
+/* ==========================================================================
+   7. LOGIN PAGE
+   ========================================================================== */
 .login-body {
   display: flex;
   flex-direction: column;
@@ -674,7 +570,7 @@ body {
   margin: 10px 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  background: rgba(17, 24, 39, 0.5); /* Darker input field */
+  background: rgba(17, 24, 39, 0.5);
   color: var(--text);
   font-size: 1rem;
 }
@@ -688,7 +584,7 @@ body {
   margin-top: 6px;
   margin-bottom: 12px;
   font-size: 0.85rem;
-  color: #ef4444;          /* red */
+  color: #ef4444;
   font-weight: 500;
   text-align: left;
 }
@@ -707,7 +603,7 @@ body {
 }
 
 .login-btn:hover {
-  background: #9965f4; /* Slightly lighter violet on hover */
+  background: #9965f4;
   transform: translateY(-2px);
 }
 
@@ -722,43 +618,28 @@ body {
   text-decoration: none;
 }
 
-/* ===== HEATMAP GRID ===== */
-.heatmap-card {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+/* ==========================================================================
+   8. ANIMATIONS
+   ========================================================================== */
+@keyframes modalBounce {
+  0%   { transform: scale(0.9) translateY(12px); opacity: 0; }
+  60%  { transform: scale(1.03) translateY(-2px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); }
 }
 
-.heatmap-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 6px;
-  margin: 16px 0;
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
 }
 
-.heatmap-cell {
-  aspect-ratio: 1 / 1;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.08);
-  transition: transform 0.2s ease;
+.modal-overlay.active .modal {
+  animation: modalBounce 0.4s cubic-bezier(.25,.8,.25,1);
 }
 
-.heatmap-cell:hover {
-  transform: scale(1.08);
-}
-
-.heatmap-footer {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-.heatmap-footer b {
-  color: var(--text);
-}
-
-.left-panel .card:first-child {
-  overflow-y: auto;
+.shake {
+  animation: shake 0.35s ease-in-out;
 }
