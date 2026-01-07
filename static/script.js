@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let attentionChart;
   let attentionData = [];
   let timeLabels = [];
+  let heatmapData = [];
 
   let sessionActive = false;
   let sessionPaused = false;
@@ -54,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
     attentionData.length = 0;
     timeLabels.length = 0;
     attentionChart.update();
+    heatmapData.length = 0;
+    renderHeatmap(heatmapData);
 
     sessionStartTime = Date.now();
     sessionPaused = false;
@@ -66,7 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const sec = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, "0");
 
       timeLabels.push(`${min}:${sec}`);
-      attentionData.push(computeAttentiveness());
+      const value = computeAttentiveness();
+      attentionData.push(value);
+
+      // Update heatmap with the same data source
+      heatmapData.push(value);
+      renderHeatmap(heatmapData);
 
       attentionChart.update();
     }, 5000);
@@ -286,3 +294,44 @@ fetchSensorData();
     setInterval(updateNavbarFromTimetable, 60000); // update every minute
   });
 });
+
+// Heatmap
+
+function renderHeatmap(data) {
+  const grid = document.getElementById("heatmapGrid");
+  grid.innerHTML = "";
+
+  let peak = 0;
+  let sum = 0;
+
+  const computedStyle = window.getComputedStyle(grid);
+  const columns = computedStyle.gridTemplateColumns;
+
+  const columnCount =
+    columns && columns !== "none"
+      ? columns.split(" ").length
+      : 12; // fallback to design default
+
+  // Trim data to max 3 rows
+  const maxCells = columnCount * 3;
+  const trimmedData = data.slice(-maxCells);
+
+  trimmedData.forEach(val => {
+    peak = Math.max(peak, val);
+    sum += val;
+
+    const cell = document.createElement("div");
+    cell.className = "heatmap-cell";
+
+    if (val < 40) cell.style.background = "#1f2933";
+    else if (val < 60) cell.style.background = "rgba(167,139,250,0.35)";
+    else if (val < 80) cell.style.background = "rgba(167,139,250,0.65)";
+    else cell.style.background = "#a78bfa";
+
+    cell.title = `${val}% attentiveness`;
+    grid.appendChild(cell);
+  });
+
+  document.getElementById("avgEng").textContent = Math.round(sum / trimmedData.length);
+  document.getElementById("peakEng").textContent = peak;
+}

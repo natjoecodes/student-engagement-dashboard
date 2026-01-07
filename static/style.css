@@ -356,7 +356,7 @@ body {
 /* ===== LEFT PANEL ===== */
 .left-panel {
   display: grid;
-  grid-template-rows: 1fr 2fr; /* history : heatmap */
+  grid-template-rows: 2.5fr 1fr; /* history : heatmap */
   gap: var(--card-gap);
   min-height: 0;
 }
@@ -365,11 +365,6 @@ body {
 .center-panel {
   display: flex;
   min-height: 0; 
-}
-
-.heatmap-card {
-  flex: 1;
-  min-height: 0;
 }
 
 /* ===== RIGHT PANEL ===== */
@@ -725,4 +720,45 @@ body {
 .login-footer a {
   color: var(--accent);
   text-decoration: none;
+}
+
+/* ===== HEATMAP GRID ===== */
+.heatmap-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+  margin: 16px 0;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  transition: transform 0.2s ease;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.08);
+}
+
+.heatmap-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.heatmap-footer b {
+  color: var(--text);
+}
+
+.left-panel .card:first-child {
+  overflow-y: auto;
 }
