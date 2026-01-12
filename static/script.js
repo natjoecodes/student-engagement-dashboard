@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const date = now.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
     const el = document.getElementById("realtime-datetime");
-    if (el) el.textContent = `${date} · ${time}`;
+    if (el) el.textContent = `${date} ${time}`;
   }
 
   function getCurrentClassFromTimetable() {

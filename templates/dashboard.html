@@ -17,14 +17,19 @@
             <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="College Logo" />
             <span>Government Engineering College<br />Kozhikode</span>
         </div>
-        <div class="faculty-period">
-            <span id="realtime-datetime"></span>
-            <span>Faculty: <b id="facultyName">—</b></span>
-            <span>Period: <b id="subjectName">—</b></span>
-        </div>
+        <div class="nav-context">
+    <div class="nav-subject" id="subjectName">—</div>
+
+    <div class="nav-meta">
+    <span class="nav-faculty">
+        Faculty: <b id="facultyName">—</b>
+    </span>
+</div>
+</div>
         <div class="navbar-actions">
-            <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
-        </div>
+    <span id="realtime-datetime"></span>
+    <a href="#" class="logout-btn" id="logoutBtn">Logout</a>
+</div>
     </nav>
 
     <main class="dashboard-container">

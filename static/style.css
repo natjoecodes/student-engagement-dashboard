@@ -83,17 +83,74 @@ body {
   left: 0;
   height: var(--navbar-h);
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+
+  display: grid;
+  grid-template-columns: auto minmax(480px, 1fr) auto;
   align-items: center;
+  column-gap: 40px;
+
   padding: 0 40px;
   background: rgba(31, 41, 55, 0.6);
   backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   z-index: 10;
+}
+
+.nav-context {
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+}
+
+.nav-subject {
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text);
+  line-height: 1.2;
+
+  /* critical for long subjects */
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#realtime-datetime {
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  width: 180px;               /* locked width */
+  text-align: center;
+
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+
+  color: var(--muted);
+}
+
+.nav-meta {
+  min-height: 1.2em;
+}
+
+.nav-meta {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-meta b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.nav-separator {
+  opacity: 0.6;
 }
 
 .logo {
@@ -115,47 +172,6 @@ body {
   letter-spacing: 0.3px;
 }
 
-.class-info {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  color: var(--text);
-  padding-bottom: 8px;
-}
-
-.class-info::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--accent);
-  border-radius: 2px;
-}
-
-.class-label, .class-separator {
-  color: var(--muted);
-  font-weight: 500;
-}
-
-.class-name {
-  color: var(--text);
-  font-weight: 700;
-}
-
-.faculty-period {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  font-weight: 500;
-  color: var(--muted);
-}
-
 .faculty-period b {
   color: var(--text);
   font-weight: 600;
@@ -169,6 +185,7 @@ body {
 .navbar-actions {
   display: flex;
   align-items: center;
+  gap: 20px;
 }
 
 .logout-btn {
